@@ -84,7 +84,7 @@ bool initializeWindow(void)
 }
 
 /**
- * destroyWindow - Clean up and destroy SDL components
+ * destroyWindow - Clean up and destroy SDL components.
  *
  * This function frees allocated memory, destroys the SDL texture,
  * renderer, and window, and quits SDL. It should be called when the
