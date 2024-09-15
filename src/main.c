@@ -84,7 +84,7 @@ void destroy_game(void)
 int main(void)
 {
 	GameRunning = initializeWindow();
-
+	
 	setup_game();
 
 	while (GameRunning)

@@ -33,6 +33,12 @@ void renderFloor(int wallBottomPixel, color_t *texelColor, int x)
 	texture_width = wallTextures[3].width;
 	texture_height = wallTextures[3].height;
 
+	if (wallTextures[4].texture_buffer == NULL)
+	{
+		fprintf(stderr, "Error: wallTextures[4].texture_buffer is NULL\n");
+		return;
+	}
+
 	for (y = wallBottomPixel - 1; y < SCREEN_HEIGHT; y++)
 	{
 		ratio = player.height / (y - SCREEN_HEIGHT / 2);
@@ -46,6 +52,12 @@ void renderFloor(int wallBottomPixel, color_t *texelColor, int x)
 								% texture_width);
 		textureOffsetY = (int)(abs(textureOffsetY * texture_height / 30)
 								% texture_height);
+
+		if (textureOffsetX < 0 || textureOffsetX >= texture_width || textureOffsetY < 0 || textureOffsetY >=     texture_height)
+		{
+			fprintf(stderr, "Out of bounds: X=%d, Y=%d\n", textureOffsetX, textureOffsetY);
+			continue;
+		}
 
 		*texelColor = wallTextures[4].
 					  texture_buffer[(texture_width * textureOffsetY) + textureOffsetX];
@@ -114,8 +126,22 @@ void renderWall(void)
 		wallBottomPixel = wallBottomPixel > SCREEN_HEIGHT
 							? SCREEN_HEIGHT : wallBottomPixel;
 		texNum = rays[x].wallHitContent - 1;
+
+		if (texNum < 0 || texNum >= NUM_TEXTURES)
+		{
+			fprintf(stderr, "Error: texNum %d out of bounds\n", texNum);
+			continue;
+		}
+
 		texture_width = wallTextures[texNum].width;
 		texture_height = wallTextures[texNum].height;
+
+		if (wallTextures[texNum].texture_buffer == NULL)
+		{
+			fprintf(stderr, "Error: wallTextures[%d].texture_buffer is NULL\n", texNum);
+			continue;
+		}
+
 		renderFloor(wallBottomPixel, &texelColor, x);
 		renderCeil(wallTopPixel, &texelColor, x);
 

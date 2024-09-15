@@ -1,5 +1,7 @@
 #include "../headers/header.h"
 
+texture_t wallTextures[NUM_TEXTURES];
+
 static const char *textureFileNames[NUM_TEXTURES] = {
 	"./images/redbrick.png",
 	"./images/purplestone.png",
@@ -34,7 +36,20 @@ void WallTexturesready(void)
 				wallTextures[i].width = upng_get_width(upng);
 				wallTextures[i].height = upng_get_height(upng);
 				wallTextures[i].texture_buffer = (color_t *)upng_get_buffer(upng);
+				printf("Successfully loaded texture: %s\n", textureFileNames[i]);
 			}
+			else
+			{	printf("Failed to decode texture: %s, error: %d\n", textureFileNames[i], upng_get_error(upng));			
+				upng_free(upng);
+				wallTextures[i].upngTexture = NULL;
+				wallTextures[i].texture_buffer = NULL;
+			}			
+		}
+		else
+		{
+			printf("Error: Failed to load texture file %d (%s)\n", i, textureFileNames[i]);
+			wallTextures[i].upngTexture = NULL;
+			wallTextures[i].texture_buffer = NULL;
 		}
 	}
 
@@ -50,5 +65,13 @@ void freeWallTextures(void)
 	int i;
 
 	for (i = 0; i < NUM_TEXTURES; i++)
-		upng_free(wallTextures[i].upngTexture);
+	{
+		if (wallTextures[i].upngTexture != NULL)
+		{
+			printf("Freeing texture %d (%s)\n", i, textureFileNames[i]);
+			upng_free(wallTextures[i].upngTexture);
+			wallTextures[i].upngTexture = NULL;
+			wallTextures[i].texture_buffer = NULL;
+		}
+	}
 }

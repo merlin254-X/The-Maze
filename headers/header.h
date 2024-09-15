@@ -37,6 +37,7 @@
 #define NUM_TEXTURES 8
 #define abs(x) ((x) < 0 ? -(x) : (x))
 
+
 typedef uint32_t color_t;
 
 /* Process Input */
@@ -147,7 +148,7 @@ typedef struct texture_s
 	upng_t *upngTexture;
 } texture_t;
 
-texture_t wallTextures[NUM_TEXTURES];
+extern texture_t wallTextures[NUM_TEXTURES];
 
 void WallTexturesready(void);
 void freeWallTextures(void);
