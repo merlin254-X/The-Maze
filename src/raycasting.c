@@ -1,10 +1,10 @@
 #include "../headers/header.h"
 
-ray_t rays[NUM_RAYS];
+ray_t rays[NUM_RAYS]; /* Array to store data for each raycast like distance & wall hit */
 
-static bool foundHorzWallHit, foundVertWallHit;
-static float horzWallHitX, horzWallHitY, vertWallHitX, vertWallHitY;
-static int horzWallContent, vertWallContent;
+static bool foundHorzWallHit, foundVertWallHit; /* flags indicating if a wall hit was found*/
+static float horzWallHitX, horzWallHitY, vertWallHitX, vertWallHitY; /* coordinates of the wall hit*/
+static int horzWallContent, vertWallContent; /* content of the map at the wall hit locations */
 
 
 /**
@@ -15,38 +15,48 @@ static int horzWallContent, vertWallContent;
 
 void horzIntersection(float rayAngle)
 {
+	/* Variables for next points of intersection, and steps */
 	float nextHorzTouchX, nextHorzTouchY, xintercept, yintercept, xstep, ystep;
 
-	foundHorzWallHit = false;
-	horzWallHitX = horzWallHitY = horzWallContent = 0;
+	foundHorzWallHit = false; /* reset wall hit flag*/
+	horzWallHitX = horzWallHitY = horzWallContent = 0; /* Reset hit position and content */
 
+
+	/* Calculate y-intercept of the first horizontal grid line the ray touches */
 	yintercept = floor(player.y / TILE_SIZE) * TILE_SIZE;
-	yintercept += isRayFacingDown(rayAngle) ? TILE_SIZE : 0;
+	yintercept += isRayFacingDown(rayAngle) ? TILE_SIZE : 0;/* Adjust if facing downwards */
 
+	/* Calculate x-intercept using the ray angle */
 	xintercept = player.x + (yintercept - player.y) / tan(rayAngle);
 
+	/* Determine the step sizes based on ray direction */
 	ystep = TILE_SIZE;
-	ystep *= isRayFacingUp(rayAngle) ? -1 : 1;
-	xstep = TILE_SIZE / tan(rayAngle);
-	xstep *= (isRayFacingLeft(rayAngle) && xstep > 0) ? -1 : 1;
-	xstep *= (isRayFacingRight(rayAngle) && xstep < 0) ? -1 : 1;
+	ystep *= isRayFacingUp(rayAngle) ? -1 : 1; /* Step up or down */
+	xstep = TILE_SIZE / tan(rayAngle); /* Horizontal step adjusted for angle  */
+	xstep *= (isRayFacingLeft(rayAngle) && xstep > 0) ? -1 : 1; /* Adjust for leftward rays  */
+	xstep *= (isRayFacingRight(rayAngle) && xstep < 0) ? -1 : 1; /* Adjust for rightward rays */
 	nextHorzTouchX = xintercept;
 	nextHorzTouchY = yintercept;
 
+	/* Traverse through the grid while inside map boundaries */
 	while (isInsideMap(nextHorzTouchX, nextHorzTouchY))
 	{
 		float xToCheck = nextHorzTouchX;
 		float yToCheck = nextHorzTouchY + (isRayFacingUp(rayAngle) ? -1 : 0);
 
+		/* Check for wall collision */
 		if (DetectCollision(xToCheck, yToCheck))
 		{
+			/* Record the hit coordinates and content */
 			horzWallHitX = nextHorzTouchX;
 			horzWallHitY = nextHorzTouchY;
 			horzWallContent = getMapValue((int)floor(yToCheck / TILE_SIZE),
 									   (int)floor(xToCheck / TILE_SIZE));
 			foundHorzWallHit = true;
-			break;
+			break; /* Stop if wall hit is found */
 		}
+
+		/* Move to the next intersection point */
 		nextHorzTouchX += xstep;
 		nextHorzTouchY += ystep;
 	}

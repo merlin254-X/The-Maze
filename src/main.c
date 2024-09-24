@@ -1,9 +1,9 @@
-
 #include "../headers/header.h"
 
 bool GameRunning = false;
 int TicksLastFrame;
 player_t player;
+
 
 /**
  * setup_game - initialize player variables and load wall textures
@@ -11,8 +11,7 @@ player_t player;
 */
 
 void setup_game(void)
-{
-
+{	
 	player.x = SCREEN_WIDTH / 2;
 	player.y = SCREEN_HEIGHT / 2;
 	player.width = 1;
@@ -24,7 +23,6 @@ void setup_game(void)
 	player.rotationAngle = PI / 2;
 	WallTexturesready();
 }
-
 
 /**
  * update_game - update_game delta time, the ticks last frame
@@ -61,8 +59,7 @@ void render_game(void)
 
 	renderMap();
 	renderRays();
-	renderPlayer();
-
+	renderPlayer();	
 	renderColorBuffer();
 }
 
@@ -72,7 +69,7 @@ void render_game(void)
 */
 void destroy_game(void)
 {
-	freeWallTextures();
+	freeWallTextures(); 
 	destroyWindow();
 }
 
